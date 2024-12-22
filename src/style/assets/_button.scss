@@ -1,0 +1,183 @@
+.button {
+    display: inline-block;
+    background-color: #f5f5f5;
+    color: #888;
+    overflow: visible;
+    margin: 0;
+    letter-spacing: -0.05ex;
+    line-height: 1;
+    font-weight: 500;
+    font-size: 16px;
+    text-decoration: none;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    transition: .2s ease all;
+    text-transform: uppercase; /* 1 */
+    font-feature-settings: "kern" 1, "liga" 1, "calt" 1, "pnum" 1, "tnum" 0, "onum" 1, "lnum" 0, "smcp" 1, "c2sc" 1; /* 2 */
+
+    &:link,
+    &:visited {
+        color: #888;
+    }
+
+    &:hover {
+        background-color: demozoo-color('primary');
+        border-color: demozoo-color('primary');
+        color: white;
+
+        svg {
+            fill: white;
+        }
+    }
+
+    &__text {
+        display: block;
+        padding: .8em 1.6em;
+        margin-top: 1px;
+    }
+
+    .icon {
+        @include size(24px);
+        line-height: 1;
+        vertical-align: middle;
+        fill: #888;
+        margin-left: .25em;
+        margin-top: -1px;
+        position: relative;
+        right: -8px;
+    }
+}
+
+.button--icon {
+    margin: 0;
+    padding: 0;
+
+    .icon {
+        margin: 0;
+        right: auto;
+    }
+
+    .button__text {
+        display: none;
+    }
+}
+
+/* Action button */
+a.action_button, button.action_button {
+    background-color: #eee;
+    border: 1px solid #aaa;
+    border-radius: 3px;
+    color: #668;
+    cursor: pointer;
+    padding: 4px;
+    text-decoration: none;
+
+    &:hover {
+        background-color: #ccc;
+    }
+
+    &.icon-add {
+        padding-left: 24px;
+        background-position: 4px center;
+        background-repeat: no-repeat;
+        background-image: url('/static/images/icons/add.png');
+    }
+
+    &.icon-edit {
+        padding-left: 24px;
+        background-position: 4px center;
+        background-repeat: no-repeat;
+        background-image: url('/static/images/icons/edit.png');
+    }
+
+    &.icon-picture_edit {
+        padding-left: 24px;
+        background-position: 4px center;
+        background-repeat: no-repeat;
+        background-image: url('/static/images/icons/picture_edit.png');
+    }
+
+    &.icon-done {
+        padding-left: 24px;
+        background-position: 4px center;
+        background-repeat: no-repeat;
+        background-image: url('/static/images/icons/tick.png');
+    }
+
+    &.icon-import_table {
+        padding-left: 24px;
+        background-position: 4px center;
+        background-repeat: no-repeat;
+        background-image: url('/static/images/icons/table_go.png');
+    }
+
+    &.icon-delete {
+        padding-left: 24px;
+        background-position: 4px center;
+        background-repeat: no-repeat;
+        background-image: url('/static/images/icons/delete.png');
+    }
+
+    &.icon-switch {
+        padding-left: 24px;
+        background-position: 4px center;
+        background-repeat: no-repeat;
+        background-image: url('/static/images/icons/arrow_refresh.png');
+    }
+
+    &.icon-back {
+        padding-left: 24px;
+        background-position: 4px center;
+        background-repeat: no-repeat;
+        background-image: url('/static/images/icons/back.png');
+    }
+
+    &.icon-locked {
+        padding-left: 24px;
+        background-position: 4px center;
+        background-repeat: no-repeat;
+        background-image: url('/static/images/icons/lock.png');
+    }
+
+    &.icon-unlocked {
+        padding-left: 24px;
+        background-position: 4px center;
+        background-repeat: no-repeat;
+        background-image: url('/static/images/icons/lock_open.png');
+    }
+
+    &.icon-spanner {
+        padding-left: 24px;
+        background-position: 4px center;
+        background-repeat: no-repeat;
+        background-image: url('/static/images/icons/wrench.png');
+    }
+}
+
+/* Icon button */
+.icon-button {
+    svg.icon {
+        fill: #aaa;
+        height: 20px;
+        width: 20px;
+        margin-left: 2px;
+        margin-top: -4px;  /* fudge factor to align with text labels, e.g. "Edit notes" */
+        padding: 0;
+    }
+    &:hover svg.icon {
+        fill: #444;
+    }
+    &:visited {
+        color: #888;
+    }
+    &:hover {
+        color: #444;
+    }
+    background-color: transparent;
+    border: none;
+    color: #888;  /* label darker than icon so that it doesn't look greyed-out */
+    cursor: pointer;
+    margin: 0;
+    padding: 6px;
+    text-decoration: none;
+}

@@ -5,17 +5,17 @@ function htmlEncode(str) {
 function applyGlobalBehaviours(context) {
     $('ul.messages li', context).animate({'backgroundColor': 'white'}, 5000);
 
-    $('a.open_in_lightbox', context).click(function(e) {
+    $('a[data-lightbox]', context).click(function(e) {
         if (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey || e.which === 2) {
             /* probably means they want to open it in a new window, so let them... */
             return true;
         }
-        var focusEmptyInput = $(this).hasClass('focus_empty_input');
+        var focusEmptyInput = $(this).data('focus') === 'empty';
         Lightbox.openUrl(this.href, applyGlobalBehaviours, {'focusEmptyInput': focusEmptyInput});
         return false;
     });
 
-    $('form.open_in_lightbox', context).submit(function() {
+    $('form[data-lightbox]', context).submit(function() {
         /* only use this for forms with method="get"! */
         Lightbox.openUrl(this.action + '?' + $(this).serialize(), applyGlobalBehaviours);
         return false;
@@ -69,7 +69,7 @@ function applyGlobalBehaviours(context) {
 }
 
 $(function() {
-    var loginMenu = $('#login_status_panel .login_menu');
+    var loginMenu = $('[data-login-menu]');
     
     loginMenu.hide();
     var loginMenuVisible = false;
@@ -90,8 +90,8 @@ $(function() {
         $('body').unbind('click', hideLoginMenuOnBodyClick);
     }
     
-    $('#login_status_panel .login_status').wrapInner('<a href="javascript:void(0)"></a>');
-    $('#login_status_panel .login_status a').click(function() {
+    $('[data-login-status]').wrapInner('<button class="user_menu__login_status_button"></button>');
+    $('[data-login-status] button').click(function() {
         if (loginMenuVisible) {
             hideLoginMenu();
         } else {

@@ -1,13 +1,13 @@
-{% load safe_markdown %}
+{% load ui_tags safe_markdown %}
 
 <div class="news-story news_story {% if not story.is_public %}private{% endif %}" id="news-{{ story.id }}">
     <ul class="actions">
         <li>
-            <a href="{{ story.get_absolute_url }}" title="Permalink">#</a>
+            {% icon_button url=story.get_absolute_url icon="hash" title="Permalink" %}
         </li>
         {% if perms.homepage.change_newsstory and site_is_writeable %}
             <li>
-                <a href="{% url 'edit_news' story.id %}" class="action_button icon edit">Edit</a>
+                {% edit_button url=story.urls.edit title="Edit news story" %}
             </li>
         {% endif %}
     </ul>

@@ -1,0 +1,18 @@
+<table class="table" summary="">
+    <colgroup>
+        {% block columns %}
+            {% if mark_excludable and site_is_writeable %}<col />{% endif %}
+            <col class="col--thumb" />
+            <col width="40%" />
+            <col />
+            <col class="col--date" />
+        {% endblock %}
+    </colgroup>
+    <tbody>
+        {% block rows %}
+            {% for production, screenshot in productions_and_screenshots %}
+                {% include "productions/tags/production_listing_row.html" %}
+            {% endfor %}
+        {% endblock %}
+    </tbody>
+</table>

@@ -1,0 +1,16 @@
+{% extends "shared/panel.html" %}
+{% load ui_tags %}
+
+{% block classnames %}supergroups_panel{% endblock %}
+{% block title %}Subgroup of{% endblock %}
+
+{% block body %}
+    <ul class="memberships">
+        {% for membership in supergroupships %}
+            <li class="group {% if not membership.is_current %}previous_membership{% endif %}">
+                <a href="{% url 'group' membership.group.id %}" {% if not membership.is_current %}title="ex-parent group"{% endif %}>{{ membership.group.name }}</a>
+                {% location_flag membership.group %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

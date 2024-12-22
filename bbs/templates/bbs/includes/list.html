@@ -1,0 +1,17 @@
+{% load ui_tags %}
+
+<ul class="list list--results">
+    {% for bbs in bbses %}
+        <li class="list__item">
+            <div class="result">
+                <div class="media media--thumbnail">
+                    {% icon "bbs" %}
+                </div>
+                <div>
+                    <a href="{% url 'bbs' bbs.id %}">{{ bbs.name }}</a>
+                    {% location_flag bbs %}
+                </div>
+            </div>
+        </li>
+    {% endfor %}
+</ul>

@@ -1,0 +1,23 @@
+{% extends "shared/panel.html" %}
+{% load ui_tags %}
+
+{% block classnames %}editable_chunk info_files_panel{% endblock %}
+{% block title %}Info file{{ info_files|length|pluralize }}{% endblock %}
+
+{% block actions %}
+    {% if can_edit %}
+        <ul class="actions">
+            <li>
+                {% edit_button url=production.urls.edit_info_files classname="edit_chunk" lightbox=True title="Edit info files" nofollow=True %}
+            </li>
+        </ul>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <ul class="info_files">
+        {% for file in info_files %}
+            <li><a href="{% url 'production_info_file' production.id file.id %}" title="{{ file.filename }} - ({{ file.filesize }} bytes)">{{ file.filename }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

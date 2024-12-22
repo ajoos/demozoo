@@ -1,0 +1,48 @@
+{% extends "shared/edit_toggle_panel.html" %}
+{% load ui_tags %}
+
+{% block classnames %}{{ block.super }} organisers_panel{% endblock %}
+{% block title %}Organisers{% endblock %}
+
+{% block body %}
+    {% regroup organisers by releaser.is_group as orga_type_list %}
+    {% for is_group, orga_list in orga_type_list %}
+        {% if is_group %}
+            <ul class="organisers">
+                <li>Presented by:</li>
+
+                {% for organiser in orga_list %}
+                    <li class="group">
+                        <a href="{% url 'group' organiser.releaser.id %}">{{ organiser.releaser.name }}</a>
+                        {% if organiser.role %}({{ organiser.role }}){% endif %}
+                        {% if can_edit %}
+                            <a href="{% url 'party_edit_organiser' party.id organiser.id %}" class="edit_organiser" data-lightbox>
+                                <img src="/static/images/icons/edit.png" width="16" height="16" alt="Edit organiser" title="Edit organiser" />
+                            </a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <ul class="organisers">
+                {% for organiser in orga_list %}
+                    <li class="scener">
+                        <a href="{% url 'scener' organiser.releaser.id %}">{{ organiser.releaser.name }}</a>
+                        {% location_flag organiser.releaser %}
+                        {% if organiser.role %}({{ organiser.role }}){% endif %}
+                        {% if can_edit %}
+                            <a href="{% url 'party_edit_organiser' party.id organiser.id %}" class="edit_organiser" data-lightbox>
+                                <img src="/static/images/icons/edit.png" width="16" height="16" alt="Edit organiser" title="Edit organiser" />
+                            </a>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endfor %}
+    {% if can_edit %}
+        <ul class="listing_actions">
+            <li>{% action_button url=party.urls.add_organiser icon="add" lightbox=True label="Add organiser" %}</li>
+        </ul>
+    {% endif %}
+{% endblock %}

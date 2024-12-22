@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load demoscene_tags production_tags compress %}
+{% load demoscene_tags production_tags ui_tags compress %}
 
 
 {% block html_title %}{{ production.title }} {% if production.byline_string %}by {{ production.byline_string }}{% endif %} - Demozoo{% endblock %}
@@ -44,13 +44,16 @@
 {% block body_class %}show_production{% endblock %}
 
 {% block base_main %}
+    {% include "productions/includes/media_lightbox_template.html" %}
+
     {% production_core_details production %}
 
     {% if request.user.is_staff %}
         {% for blurb in blurbs %}
             <div class="blurb">
                 <ul class="actions">
-                    <li><a href="{% url 'production_edit_blurb' production.id blurb.id %}" class="action_button icon edit open_in_lightbox">Edit</a></li>
+                    {% url 'production_edit_blurb' production.id blurb.id as edit_blurb_url %}
+                    <li>{% edit_button url=edit_blurb_url lightbox=True title="Edit blurb" %}</li>
                 </ul>
                 <p>{{ blurb.body }}</p>
             </div>
@@ -58,7 +61,7 @@
     {% endif %}
 
     {% if site_is_writeable %}
-        {% include "productions/_award_recommendations.html" %}
+        {% include "productions/includes/award_recommendations.html" %}
     {% endif %}
 
     <div class="mainstage">
@@ -66,22 +69,24 @@
 
         <div class="right">
             {% if award_nominations %}
-                {% include "productions/_awards.html" %}
+                {% include "productions/includes/awards_panel.html" %}
             {% endif %}
 
             {% if download_links %}
-                {% include "productions/_downloads.html" %}
+                {% include "productions/includes/downloads_panel.html" %}
             {% endif %}
 
             {% if info_files %}
-                {% include "productions/_info_files.html" %}
+                {% include "productions/includes/info_files_panel.html" %}
             {% endif %}
 
             {% if external_links %}
-                {% include "productions/_external_links.html" %}
+                {% include "shared/external_links_panel.html" with obj=production %}
             {% endif %}
 
-            {% include "productions/_tags.html" %}
+            {% if tags or can_edit %}
+                {% include "productions/includes/tags_panel.html" %}
+            {% endif %}
 
             {% if can_edit %}
                 <div class="panel tell_us_something_panel">
@@ -90,20 +95,20 @@
                     <div class="tell_us_something">
                         <div class="tell_us_something_title">Add other information</div>
                         <ul class="tell_us_something_options">
-                            <li><a href="{% url 'production_edit_download_links' production.id %}" class="open_in_lightbox focus_empty_input">Add a download link</a></li>
-                            <li><a href="{% url 'production_edit_external_links' production.id %}" class="open_in_lightbox focus_empty_input">Add an external site link</a></li>
-                            {% if production.supertype == 'music' %}
-                                <li><a href="{{ production.get_add_screenshot_url }}" class="open_in_lightbox">Add artwork</a></li>
-                            {% else %}
-                                <li><a href="{{ production.get_add_screenshot_url }}" class="open_in_lightbox">Add a screenshot</a></li>
-                            {% endif %}
-                            <li><a href="{% url 'production_add_credit' production.id %}" class="add_credit">Add a credit</a></li>
-                            <li><a href="{% url 'production_edit_info_files' production.id %}" class="open_in_lightbox">Add an info file</a></li>
+                            <li><a href="{{ production.urls.edit_download_links }}" data-lightbox data-focus="empty">Add a download link</a></li>
+                            <li><a href="{{ production.urls.edit_external_links }}" data-lightbox data-focus="empty">Add an external site link</a></li>
+                            <li>
+                                <a href="{{ production.urls.add_screenshot }}" data-lightbox>
+                                    {% if production.supertype == 'music' %}Add artwork{% else %}Add a screenshot{% endif %}
+                                </a>
+                            </li>
+                            <li><a href="{{ production.urls.add_credit }}" class="add_credit">Add a credit</a></li>
+                            <li><a href="{{ production.urls.edit_info_files }}" data-lightbox>Add an info file</a></li>
                             {% if production.can_have_soundtracks %}
-                                <li><a href="{% url 'production_edit_soundtracks' production.id %}" class="open_in_lightbox">Add a soundtrack listing</a></li>
+                                <li><a href="{{ production.urls.edit_soundtracks }}" data-lightbox>Add a soundtrack listing</a></li>
                             {% endif %}
                             {% if request.user.is_staff and not blurbs %}
-                                <li><a href="{% url 'production_add_blurb' production.id %}" class="open_in_lightbox">Add a 'blurb'</a></li>
+                                <li><a href="{{ production.urls.add_blurb }}" data-lightbox>Add a 'blurb'</a></li>
                             {% endif %}
                         </ul>
                     </div>
@@ -114,56 +119,27 @@
 
     <div style="clear: both;"></div>
 
-    {% include "productions/_notes.html" %}
+    {% if production.notes or request.user.is_staff %}
+        {% include "shared/notes_panel.html" with obj=production %}
+    {% endif %}
 
     <div class="secondary_panels {% if not credits and not featured_in_productions and not soundtracks and not production.can_have_pack_members and not packed_in_productions %}hidden{% endif %}">
-        {% include "productions/_credits.html" %}
+        {% include "productions/includes/credits_panel.html" with is_editing=editing_credits %}
 
         {% if production.can_have_pack_members %}
-            <div class="pack_contents_panel panel editable_chunk">
-                <h3 class="panel__title">Pack contents</h3>
-
-                {% if can_edit %}
-                    <ul class="actions">
-                        <li>
-                            <a href="{% url 'production_edit_pack_contents' production.id %}" class="action_button icon edit edit_chunk open_in_lightbox" title="Edit pack contents" rel="nofollow">Edit</a>
-                        </li>
-                    </ul>
-                {% endif %}
-
-                {% production_listing pack_members show_screenshots=1 %}
-            </div>
+            {% include "productions/includes/pack_contents_panel.html" %}
         {% endif %}
 
         {% if packed_in_productions %}
-            <div class="packed_in_panel panel">
-                <h3 class="panel__title">Packed in:</h3>
-                {% production_listing packed_in_productions show_screenshots=1 %}
-            </div>
+            {% include "productions/includes/packed_in_panel.html" %}
         {% endif %}
 
         {% if featured_in_productions %}
-            <div class="featured_in_panel panel">
-                <h3 class="panel__title">Featured in:</h3>
-                {% production_listing featured_in_productions show_screenshots=1 %}
-            </div>
+            {% include "productions/includes/featured_in_panel.html" %}
         {% endif %}
 
         {% if soundtracks %}
-            <div class="soundtracks_panel panel editable_chunk">
-                <h3 class="panel__title">Soundtrack</h3>
-
-                {% if can_edit %}
-                    <ul class="actions">
-                        <li>
-                            <a href="{% url 'production_edit_soundtracks' production.id %}" class="action_button icon edit edit_chunk open_in_lightbox" title="Edit soundtrack details" rel="nofollow">Edit</a>
-                        </li>
-                    </ul>
-                {% endif %}
-
-                {% production_listing soundtracks %}
-
-            </div>
+            {% include "productions/includes/soundtracks_panel.html" %}
         {% endif %}
     </div>
 
@@ -173,7 +149,7 @@
 
     {% if request.user.is_staff and site_is_writeable %}
         <ul class="maintenance_actions">
-            <li><a href="{% url 'delete_production' production.id %}" class="action_button icon delete open_in_lightbox">Delete production</a></li>
+            <li>{% action_button url=production.urls.delete icon="delete" lightbox=True label="Delete production" %}</li>
         </ul>
     {% endif %}
 {% endblock %}

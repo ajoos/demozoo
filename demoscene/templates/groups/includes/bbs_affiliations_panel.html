@@ -1,0 +1,17 @@
+{% extends "shared/panel.html" %}
+{% load ui_tags %}
+
+{% block classnames %}bbs_panel{% endblock %}
+{% block title %}BBS affiliations{% endblock %}
+
+{% block body %}
+    <ul class="bbses">
+        {% for affiliation in bbs_affiliations %}
+            <li class="bbs">
+                <a href="{% url 'bbs' affiliation.bbs.id %}">{{ affiliation.bbs.name }}</a>
+                {% location_flag affiliation.bbs %}
+                {% if affiliation.role %}- {{ affiliation.get_role_display }}{% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

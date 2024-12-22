@@ -1,17 +1,7 @@
-{% extends base_template_with_ajax_option %}
-{% load spawning_formset compress %}
-
+{% extends "generic/edit_form_with_ajax_option.html" %}
+{% load spawning_formset %}
 
 {% block html_title %}Editing invitations for {{ party.name }} - Demozoo{% endblock %}
-{% block extra_head %}
-    {% include "shared/editor_css.html" %}
-    {% include "shared/editor_js.html" %}
-    <script>
-        $(function() {
-            applyEditControls($('form.party_release_form'));
-        })
-    </script>
-{% endblock %}
 
 {% block base_main %}
     <h2>Editing releases for {{ party.name }}:</h2>
@@ -19,13 +9,13 @@
     <div class="long_help">
         <h3>Non-compo releases only!</h3>
         {% if party.competitions.count %}
-            <p>Productions that were part of a competition should be added under that competition instead. (You can <a href="{% url 'party_add_competition' party.id %}" class="open_in_lightbox">add a competition</a> if it isn't listed here already.)</p>
+            <p>Productions that were part of a competition should be added under that competition instead. (You can <a href="{% url 'party_add_competition' party.id %}" data-lightbox>add a competition</a> if it isn't listed here already.)</p>
         {% else %}
-            <p>For productions that were part of a competition, <a href="{% url 'party_add_competition' party.id %}" class="open_in_lightbox">add a competition</a> first.</p>
+            <p>For productions that were part of a competition, <a href="{% url 'party_add_competition' party.id %}" data-lightbox>add a competition</a> first.</p>
         {% endif %}
     </div>
 
-    <form action="{% url 'party_edit_releases' party.id %}" method="post" class="entry_form party_release_form">
+    <form action="{% url 'party_edit_releases' party.id %}" method="post" data-edit-form class="entry_form party_release_form">
         {% csrf_token %}
 
         {% spawningformset formset %}

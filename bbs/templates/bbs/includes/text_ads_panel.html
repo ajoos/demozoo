@@ -1,0 +1,23 @@
+{% extends "shared/panel.html" %}
+{% load ui_tags %}
+
+{% block classnames %}editable_chunk text_ads_panel{% endblock %}
+{% block title %}Text ads{% endblock %}
+
+{% block actions %}
+    {% if can_edit %}
+        <ul class="actions">
+            <li>
+                {% edit_button url=bbs.urls.edit_text_ads classname="edit_chunk" lightbox=True nofollow=True title="Edit text ads" %}
+            </li>
+        </ul>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <ul class="text_ads">
+        {% for file in text_ads %}
+            <li><a href="{% url 'bbs_text_ad' bbs.id file.id %}" title="{{ file.filename }} - ({{ file.filesize }} bytes)">{{ file.filename }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "shared/panel.html" %}
+{% load ui_tags %}
+
+{% block classnames %}editable_chunk downloads_panel{% endblock %}
+{% block title %}Downloads{% endblock %}
+
+{% block actions %}
+    {% if can_edit %}
+        <ul class="actions">
+            <li>
+                {% edit_button url=production.urls.edit_download_links classname="edit_chunk" lightbox=True focus_empty=True title="Edit download links" nofollow=True %}
+            </li>
+        </ul>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <ul class="download_links">
+        {% for link in download_links %}
+            <li class="download_link {{ link.html_link_class }}">
+                {{ link.as_download_link|safe }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

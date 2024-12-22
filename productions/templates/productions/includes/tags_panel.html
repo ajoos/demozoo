@@ -1,0 +1,16 @@
+{% extends "shared/edit_toggle_panel.html" %}
+
+{% block classnames %}{{ block.super }} tags_panel{% endblock %}
+{% block title %}Tags{% endblock %}
+
+{% block body %}
+    <div id="tags_message"></div>
+    {% include "productions/includes/tags_list.html" with tags=tags only %}
+    {% if can_edit %}
+        <form class="tags_form" action="{% url 'production_edit_tags' production.id %}" method="post">
+            {% csrf_token %}
+            {{ tags_form.tags }}
+            <input type="submit" value="Update" />
+        </form>
+    {% endif %}
+{% endblock %}

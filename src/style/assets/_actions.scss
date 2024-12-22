@@ -1,0 +1,41 @@
+/* Action buttons bar */
+ul.actions {
+    float: right;
+    line-height: 32px;
+
+    li {
+        display: inline-block;
+
+        a.action_button, button.action_button {
+            margin-left: 4px;
+        }
+    }
+}
+
+ul.listing_actions {
+    float: left;
+    line-height: 32px;
+    margin-bottom: 16px;
+
+    li {
+        display: inline;
+
+        a.action_button, button.action_button {
+            margin-left: 4px;
+        }
+    }
+}
+
+ul.maintenance_actions {
+    clear: both;
+    line-height: 32px;
+    padding-top: 16px;
+
+    li {
+        display: inline;
+
+        a.action_button, button.action_button {
+            margin-left: 4px;
+        }
+    }
+}

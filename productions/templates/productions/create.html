@@ -1,28 +1,17 @@
-{% extends base_template_with_ajax_option %}
+{% extends "generic/edit_form_with_ajax_option.html" %}
 {% load urlsub %}
 
-
 {% block html_title %}New production - Demozoo{% endblock %}
-
-{% block extra_head %}
-    {% include "shared/editor_css.html" %}
-    {% include "shared/editor_js.html" %}
-    <script>
-        $(function() {
-            applyEditControls($('form.production_create_form'));
-        })
-    </script>
-{% endblock %}
 
 {% block base_main %}
     <div class="form_title">
         <h2>New production</h2>
         <p>(see also:
-            <a href="{% url 'new_music' %}{% urlsub %}" class="open_in_lightbox">New music</a>
-            | <a href="{% url 'new_graphics' %}{% urlsub %}" class="open_in_lightbox">New graphics</a>)</p>
+            <a href="{% url 'new_music' %}{% urlsub %}" data-lightbox>New music</a>
+            | <a href="{% url 'new_graphics' %}{% urlsub %}" data-lightbox>New graphics</a>)</p>
     </div>
 
-    <form action="{% url 'new_production' %}" method="post" class="entry_form production_create_form">
+    <form action="{% url 'new_production' %}" method="post" data-edit-form class="entry_form">
         {% csrf_token %}
 
         {% include "shared/form_field.html" with field=form.title %}
@@ -31,7 +20,7 @@
         {% include "shared/form_field.html" with field=form.types %}
         {% include "shared/form_field.html" with field=form.platforms %}
 
-        {% include "shared/production_download_formset.html" %}
+        {% include "productions/includes/download_formset.html" %}
         <div class="field">
             <input type="submit" Value="Add new production"/>
         </div>

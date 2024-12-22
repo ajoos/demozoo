@@ -1,0 +1,42 @@
+{% extends base_template_with_ajax_option %}
+
+
+{% block html_title %}Log in - Demozoo{% endblock %}
+
+{# suppress the 'next' field in the header login form - we don't want to end up back here on login #}
+{% block login_next_field %}{% endblock %}
+{% block login_sceneid_next_param %}{% endblock %}
+
+{% block base_main %}
+    <form class="login_form" method="post" action="{% url 'log_in' %}">
+        {% if form.errors %}
+            <p>Your username and password didn't match. Please try again.</p>
+        {% elif is_ajax %}
+            <p>Please log in to proceed:</p>
+        {% endif %}
+
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td><label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label></td>
+                <td>{{ form.username }}</td>
+            </tr>
+            <tr>
+                <td><label for="{{ form.password.id_for_label }}">{{ form.password.label }}</label></td>
+                <td>{{ form.password }}</td>
+            </tr>
+        </table>
+        <div>
+            <button type="submit">
+                <span>Log in</span>
+            </button>
+
+            <input type="hidden" name="next" value="{{ next }}" />
+
+            <div class="login_form__sceneid_login_prompt">
+                ...or log in with
+                <a class="sceneid_login_button" href="{% url 'sceneid_auth' %}{% if next %}?next={{ next|urlencode }}{% endif %}" title="Log in with SceneID">SceneID</a>
+            </div>
+        </div>
+    </form>
+{% endblock %}

@@ -1,16 +1,18 @@
 {% extends 'base.html' %}
-{% load safe_markdown compress %}
+{% load ui_tags safe_markdown compress %}
 
 {% block html_title %}Homepage banners - Demozoo{% endblock %}
 
 {% block base_main %}
-    <h1>Banners</h1>
+    <header class="page__header">
+        <ul class="actions">
+            <li>
+                {% icon_button url="add_banner" icon="add" label="Add new banner" %}
+            </li>
+        </ul>
 
-    <ul class="actions">
-        <li>
-            <a href="{% url 'add_banner' %}" class="action_button icon add">Add new banner</a>
-        </li>
-    </ul>
+        <h1 class="page__title">Banners</h1>
+    </header>
 
     <table width="100%">
         <tr>

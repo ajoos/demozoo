@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load demoscene_tags compress %}
+{% load demoscene_tags ui_tags compress %}
 
 {% block html_title %}Editing {{ competition.party.name }} {{ competition.name }} competition - Demozoo{% endblock %}
 {% block extra_js %}
@@ -14,11 +14,6 @@
 {% block extra_head %}
     {% include "shared/editor_css.html" %}
     {% include "shared/editor_js.html" %}
-    <script>
-        $(function() {
-            applyEditControls($('form.edit_competition_form'));
-        })
-    </script>
 {% endblock %}
 
 {% block body_class %}edit_competition{% endblock %}
@@ -37,18 +32,16 @@
 
 {% if is_admin %}
     <ul class="actions">
-        <li><a href="{% url 'competition_import_text' competition.id %}" class="action_button icon import_table">Import results</a></li>
+        <li>{% action_button url=competition.urls.import_text icon="import_table" label="Import results" %}</li>
     </ul>
 {% endif %}
 
 <h2>{{ competition.party.name }} {{ competition.name }} competition</h2>
 
-<form action="{% url 'competition_edit' competition.id %}" method="post" class="entry_form edit_competition_form">
+<form action="{{ competition.urls.edit }}" method="post" data-edit-form class="entry_form">
     {% csrf_token %}
     
-    {% for field in form.visible_fields %}
-        {% include "shared/form_field.html" %}
-    {% endfor %}
+    {% include "shared/form_fields.html" %}
     <div class="field">
         <input type="submit" value="Update" />
     </div>
@@ -57,7 +50,7 @@
 <ul id="results_table"></ul>
 
 <ul class="actions">
-    <li><a href="{% url 'party' competition.party.id %}" class="action_button icon done">Done</a></li>
+    <li>{% action_button url=competition.party.get_absolute_url icon="done" label="Done" %}</li>
 </ul>
 
     {% last_edited_by competition %}

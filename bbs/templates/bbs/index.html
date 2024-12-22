@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load laces %}
+{% load ui_tags laces urlsub %}
 
 {% block html_title %}BBSes - Demozoo{% endblock %}
 
@@ -8,13 +8,28 @@
     <header class="page__header">
         {% if site_is_writeable %}
             <ul class="actions">
-                <li><a href="{% url 'new_bbs' %}" class="action_button icon add open_in_lightbox">New BBS</a></li>
+                <li>{% icon_button url="new_bbs" icon="add" lightbox=True label="New BBS" %}</li>
             </ul>
         {% endif %}
         <h1 class="page__title">BBSes</h1>
     </header>
 
-    {% include "bbs/_list.html" with bbses=page.object_list %}
+    <p>
+        Order by:
+        {% if order == 'name' %}
+            <strong><a href="{% if asc %}{% urlsub dir='desc' page=1 %}{% else %}{% urlsub dir='asc' page=1 %}{% endif %}">Name</a></strong>
+        {% else %}
+            <a href="{% urlsub order='name' dir='asc' page=1 %}">Name</a>
+        {% endif %}
+        |
+        {% if order == 'added' %}
+            <strong><a href="{% if asc %}{% urlsub dir='desc' page=1 %}{% else %}{% urlsub dir='asc' page=1 %}{% endif %}">Date added</a></strong>
+        {% else %}
+            <a href="{% urlsub order='added' dir='desc' page=1 %}">Date added</a>
+        {% endif %}
+    </p>
+
+    {% include "bbs/includes/list.html" with bbses=page.object_list %}
     <br />
 
     {% component pagination_controls %}

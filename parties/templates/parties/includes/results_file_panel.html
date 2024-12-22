@@ -1,0 +1,12 @@
+{% extends "shared/panel.html" %}
+
+{% block classnames %}results_file_panel{% endblock %}
+{% block title %}Results file{% endblock %}
+
+{% block body %}
+    <ul class="results_files">
+        {% for file in results_files %}
+            <li><a href="{% url 'party_results_file' party.id file.id %}">{{ file.filename }}</a> ({{ file.filesize }} bytes)</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

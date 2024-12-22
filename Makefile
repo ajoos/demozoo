@@ -8,5 +8,8 @@ coverage:
 	&& coverage html
 
 lint:
-	flake8
-	isort --check-only --diff .
+	ruff check
+
+format:
+	ruff check --select I --fix
+	ruff format

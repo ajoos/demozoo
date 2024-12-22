@@ -1,7 +1,5 @@
 {% extends "base.html" %}
-{% load demoscene_tags releaser_tags compress %}
-{% load safe_markdown %}
-
+{% load demoscene_tags releaser_tags ui_tags compress safe_markdown %}
 
 {% block html_title %}{{ scener.name_with_affiliations }} - Demozoo{% endblock %}
 
@@ -27,14 +25,14 @@
         {% if prompt_to_edit or show_lock_button or show_locked_button %}
             <ul class="actions">
                 {% if show_lock_button %}
-                    <li><a class="action_button icon unlocked edit_chunk open_in_lightbox" href="{% url 'lock_releaser' scener.id %}" title="Lock this scener">Unlocked</a></li>
+                    <li>{% icon_button icon="lock-open" classname="edit_chunk" lightbox=True url=scener.urls.lock title="Lock this scener" %}</li>
                 {% endif %}
                 {% if show_locked_button %}
-                    <li><a class="action_button icon locked edit_chunk open_in_lightbox" href="{% url 'releaser_protected' scener.id %}">Protected</a></li>
+                    <li>{% icon_button icon="lock" classname="edit_chunk" lightbox="True" url=scener.urls.protected title="Protected" %}</li>
                 {% endif %}
                 {% if prompt_to_edit %}
                     <li>
-                        <a href="{% url 'releaser_edit_primary_nick' scener.id %}" class="action_button icon edit edit_chunk open_in_lightbox focus_empty_input" title="Edit name" rel="nofollow">Edit</a>
+                        {% edit_button url=scener.urls.edit_primary_nick classname="edit_chunk" lightbox=True focus_empty=True title="Edit name" nofollow=True %}
                     </li>
                 {% endif %}
             </ul>
@@ -51,25 +49,7 @@
     </div>
 
     {% if alternative_nicks %}
-        <div class="panel alternative_nicks_panel editable_chunk {% if can_edit %}edit_toggle {% if editing_nicks %}editing{% endif %}{% endif %}">
-            <h3 class="panel__title">Also known as</h3>
-
-            <ul class="nicks">
-                {% for nick in alternative_nicks %}
-                    <li>
-                        <b>{{ nick.name }}</b> {% nick_variants nick %}
-                        {% if can_edit %}
-                            <a href="{% url 'releaser_edit_nick' scener.id nick.id %}" class="open_in_lightbox edit_nick">
-                                <img src="/static/images/icons/edit.png" width="16" height="16" alt="Edit name" title="Edit name" />
-                            </a>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-            {% if can_edit %}
-                <a href="{% url 'releaser_add_nick' scener.id %}" class="action_button icon add add_nick open_in_lightbox">Add another name</a>
-            {% endif %}
-        </div>
+        {% include "releasers/includes/alternative_nicks_panel.html" with releaser=scener is_editing=editing_nicks %}
     {% endif %}
 
     <div>
@@ -82,7 +62,7 @@
                     <em>not set</em>
                 {% endif %}
                 {% if site_is_writeable %}
-                    <a href="{% url 'scener_edit_real_name' scener.id %}" class="open_in_lightbox" rel="nofollow">
+                    <a href="{% url 'scener_edit_real_name' scener.id %}" data-lightbox rel="nofollow">
                         <img src="/static/images/icons/edit.png" width="16" height="16" alt="Edit real name" title="Edit real name" />
                     </a>
                 {% endif %}
@@ -102,7 +82,7 @@
                 {% endif %}
             {% endif %}
             {% if can_edit %}
-                <a href="{% url 'scener_edit_location' scener.id %}" class="open_in_lightbox" rel="nofollow">
+                <a href="{% url 'scener_edit_location' scener.id %}" data-lightbox rel="nofollow">
                     <img src="/static/images/icons/edit.png" width="16" height="16" alt="Edit location" title="Edit location" />
                 </a>
             {% endif %}
@@ -110,99 +90,23 @@
 
     </div>
 
-    <div class="editable_chunk panel external_links_panel">
-        <h3 class="panel__title">External links</h3>
-
-        {% if can_edit %}
-            <ul class="actions">
-                <li>
-                    <a href="{% url 'releaser_edit_external_links' scener.id %}" class="action_button icon edit edit_chunk open_in_lightbox focus_empty_input" title="Edit external links" rel="nofollow">Edit</a>
-                </li>
-            </ul>
-        {% endif %}
-        <ul class="external_links">
-            {% for link in external_links %}
-                <li>{{ link.html_link|safe }}</li>
-            {% endfor %}
-        </ul>
-    </div>
+    {% include "shared/external_links_panel.html" with obj=scener %}
 
     {% if scener.notes or request.user.is_staff %}
-        <div class="editable_chunk panel notes_panel">
-            {% if request.user.is_staff and site_is_writeable %}
-                <ul class="actions">
-                    <li><a class="action_button icon edit edit_chunk open_in_lightbox" href="{% url 'releaser_edit_notes' scener.id %}">Edit notes</a></li>
-                </ul>
-            {% endif %}
-            <div class="notes">
-                {{ scener.notes|safe_markdown }}
-            </div>
-        </div>
+        {% include "shared/notes_panel.html" with obj=scener %}
     {% endif %}
 
     <div id="side_column">
-        <div class="panel groups_panel editable_chunk {% if can_edit %}edit_toggle {% if editing_groups %}editing{% endif %}{% endif %}">
-            <h3 class="panel__title">Member of</h3>
-
-            <ul class="memberships">
-                {% for membership in memberships %}
-                    <li class="group {% if not membership.is_current %}previous_membership{% endif %}">
-                        <a href="{% url 'group' membership.group.id %}" {% if not membership.is_current %}title="previous membership"{% endif %}>{{ membership.group.name }}</a>
-                        {% if can_edit %}
-                            <a href="{% url 'scener_edit_membership' scener.id membership.id %}" class="open_in_lightbox edit_membership">
-                                <img src="/static/images/icons/edit.png" width="16" height="16" alt="Edit membership" title="Edit membership" />
-                            </a>
-                        {% endif %}
-                    </li>
-                {% endfor %}
-            </ul>
-            {% if can_edit %}
-                <a href="{% url 'scener_add_group' scener.id %}" class="action_button icon add open_in_lightbox add_group">Add group</a>
-            {% endif %}
-        </div>
+        {% include "sceners/includes/groups_panel.html" with is_editing=editing_groups %}
     </div>
     
     <div id="main_column">
         {% if parties_organised %}
-            <div class="panel parties_organised_panel">
-                <h3 class="panel__title">Organiser of</h3>
-                <ul class="parties">
-                    {% for organiser in parties_organised %}
-                        {% with party=organiser.party %}
-                            <li>
-                                {% if party.is_cancelled %}<del>{% endif %}
-                                <a href="{% url 'party' party.id %}" title="{% if party.is_cancelled %}Cancelled - {% endif %}{% if party.is_online %}Online{% elif party.location %}{{ party.location }}{% endif %}">
-                                    {% if party.is_online %}
-                                        <img src="/static/images/icons/computer.png" alt="[Online]" />
-                                    {% elif party.country_code %}
-                                        <img src="/static/images/icons/flags/{{ party.country_code|lower }}.png" alt="[{{ party.country_code }}]" />
-                                    {% endif %}
-                                    {{ party.name }}
-                                </a>
-                                {% if party.start_date %}
-                                    - {% date_range party.start_date party.end_date %}
-                                {% endif %}
-                                {% if party.is_cancelled %}</del>{% endif %}
-                                {% if organiser.role %}({{ organiser.role }}){% endif %}
-                            </li>
-                        {% endwith %}
-                    {% endfor %}
-                </ul>
-            </div>
+            {% include "releasers/includes/parties_organised_panel.html" %}
         {% endif %}
 
         {% if bbses_operated %}
-            <div class="panel bbses_operated_panel">
-                <h3 class="panel__title">BBS</h3>
-                <ul class="bbses">
-                    {% for operator in bbses_operated %}
-                        <li {% if not operator.is_current %}class="previous_membership"{% endif %}>
-                            <a href="{% url 'bbs' operator.bbs.id %}" {% if not operator.is_current %}title="ex-staff"{% endif %}>{{ operator.bbs.name }}</a>
-                            - {{ operator.get_role_display }}
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
+            {% include "sceners/includes/bbses_operated_panel.html" %}
         {% endif %}
 
         {% combined_releases scener include_tournaments=True %}
@@ -213,10 +117,10 @@
     {% if request.user.is_staff and site_is_writeable %}
         <ul class="maintenance_actions">
             {% if not scener.is_referenced %}
-                <li><a href="{% url 'delete_releaser' scener.id %}" class="action_button icon delete open_in_lightbox">Delete scener</a></li>
+                <li>{% action_button url=scener.urls.delete icon="delete" lightbox=True label="Delete scener" %}</li>
             {% endif %}
             {% if scener.can_be_converted_to_group %}
-                <li><a href="{% url 'scener_convert_to_group' scener.id %}" class="action_button icon switch open_in_lightbox">Convert to group</a></li>
+                <li>{% action_button url=scener.urls.convert_to_group icon="switch" lightbox=True label="Convert to group" %}</li>
             {% endif %}
         </ul>
     {% endif %}

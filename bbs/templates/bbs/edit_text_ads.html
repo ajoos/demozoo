@@ -1,5 +1,4 @@
-{% extends base_template_with_ajax_option %}
-
+{% extends "generic/edit_form_with_ajax_option.html" %}
 
 {% block html_title %}
     {% if add_only %}
@@ -9,16 +8,6 @@
     {% endif %}
 {% endblock %}
 
-{% block extra_head %}
-    {% include "shared/editor_css.html" %}
-    {% include "shared/editor_js.html" %}
-    <script>
-        $(function() {
-            applyEditControls($('form.bbs_edit_text_ads_form'));
-        })
-    </script>
-{% endblock %}
-
 {% block base_main %}
     {% if add_only %}
         <h2>Adding text ad for {{ bbs.name }}:</h2>
@@ -26,7 +15,7 @@
         <h2>Editing text ads for {{ bbs.name }}:</h2>
     {% endif %}
 
-    <form action="{% url 'bbs_edit_text_ads' bbs.id %}" method="post" enctype="multipart/form-data" class="entry_form bbs_edit_text_ads_form">
+    <form action="{% url 'bbs_edit_text_ads' bbs.id %}" method="post" enctype="multipart/form-data" data-edit-form class="entry_form">
         {% csrf_token %}
 
         {{ formset.management_form }}

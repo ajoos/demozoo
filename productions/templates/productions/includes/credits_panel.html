@@ -1,0 +1,32 @@
+{% extends "shared/edit_toggle_panel.html" %}
+{% load ui_tags %}
+
+{% block classnames %}{{ block.super }} credits_panel {% if not credits %}hidden{% endif %}{% endblock %}
+{% block panel_attributes %}{{ block.super }} id="credits_panel"{% endblock %}
+{% block title %}Credits{% endblock %}
+
+{% block body %}
+    <ul class="credits">
+        {% regroup credits by nick as nick_list %}
+        {% for nick_credits in nick_list %}
+            <li class="{% if nick_credits.grouper.releaser.is_group %}group{% else %}scener{% endif %}">
+                <a href="{{ nick_credits.grouper.releaser.get_absolute_url }}">{{ nick_credits.grouper }}</a>
+                -
+                {% for credit in nick_credits.list %}
+                    {{ credit.description }}{% if not forloop.last %},{% endif %}
+                {% endfor %}
+
+                {% if can_edit %}
+                    <a href="{% url 'production_edit_credit' production.id nick_credits.grouper.id %}" class="edit_credit">
+                        <img src="/static/images/icons/edit.png" width="16" height="16" alt="Edit credit" title="Edit credit" />
+                    </a>
+                {% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+    {% if can_edit %}
+        <ul class="listing_actions">
+            <li>{% action_button url=production.urls.add_credit icon="add" classname="add_credit" label="Add credit" %}</li>
+        </ul>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,3 @@
+{% if obj.country_code %}
+<img src="/static/images/icons/flags/{{ obj.country_code|lower }}.png" alt="({{ obj.country_code }})" title="{{ obj.location }}" />
+{% endif %}

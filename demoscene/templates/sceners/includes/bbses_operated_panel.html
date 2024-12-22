@@ -1,0 +1,15 @@
+{% extends "shared/panel.html" %}
+
+{% block classnames %}bbses_operated_panel{% endblock %}
+{% block title %}BBS{% endblock %}
+
+{% block body %}
+    <ul class="bbses">
+        {% for operator in bbses_operated %}
+            <li {% if not operator.is_current %}class="previous_membership"{% endif %}>
+                <a href="{% url 'bbs' operator.bbs.id %}" {% if not operator.is_current %}title="ex-staff"{% endif %}>{{ operator.bbs.name }}</a>
+                - {{ operator.get_role_display }}
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

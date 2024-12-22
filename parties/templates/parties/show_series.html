@@ -1,7 +1,5 @@
 {% extends "base.html" %}
-{% load static demoscene_tags compress %}
-{% load safe_markdown %}
-
+{% load demoscene_tags ui_tags compress safe_markdown static %}
 
 {% block html_title %}{{ party_series.name }} - Demozoo{% endblock %}
 
@@ -21,7 +19,7 @@
         {% if prompt_to_edit %}
             <ul class="actions">
                 <li>
-                    <a href="{% url 'party_edit_series' party_series.id %}" class="action_button icon edit edit_chunk open_in_lightbox" title="Edit party details">Edit</a>
+                    {% edit_button url=party_series.urls.edit classname="edit_chunk" lightbox=True title="Edit party details" %}
                 </li>
             </ul>
         {% endif %}
@@ -38,41 +36,16 @@
     </div>
 
     {% if external_links or can_edit %}
-        <div class="panel external_links_panel editable_chunk">
-            <h3 class="panel__title">External links</h3>
-
-            {% if can_edit %}
-                <ul class="actions">
-                    <li>
-                        <a href="{% url 'party_edit_series_external_links' party_series.id %}" class="action_button icon edit edit_chunk open_in_lightbox focus_empty_input" title="Edit external links">Edit</a>
-                    </li>
-                </ul>
-            {% endif %}
-
-            <ul class="external_links">
-                {% for link in external_links %}
-                    <li>{{ link.html_link|safe }}</li>
-                {% endfor %}
-            </ul>
-        </div>
+        {% include "shared/external_links_panel.html" with obj=party_series %}
     {% endif %}
 
     {% if party_series.notes or request.user.is_staff %}
-        <div class="editable_chunk panel notes_panel">
-            {% if request.user.is_staff and site_is_writeable %}
-                <ul class="actions">
-                    <li><a class="action_button icon edit edit_chunk open_in_lightbox" href="{% url 'party_edit_series_notes' party_series.id %}">Edit notes</a></li>
-                </ul>
-            {% endif %}
-            <div class="notes">
-                {{ party_series.notes|safe_markdown }}
-            </div>
-        </div>
+        {% include "shared/notes_panel.html" with obj=party_series %}
     {% endif %}
 
     {% if can_edit %}
         <ul class="actions">
-            <li><a href="{% url 'new_party' %}?party_series_name={{ party_series.name|urlencode }}" class="action_button icon add open_in_lightbox">New party edition</a></li>
+            <li>{% icon_button url=new_edition_url icon="add" lightbox=True label="New party edition" %}</li>
         </ul>
     {% endif %}
     <div style="clear: both;"></div>

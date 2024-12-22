@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load compress demoscene_tags laces %}
+{% load production_tags ui_tags laces %}
 
 
 {% block html_title %}Graphics - Demozoo{% endblock %}
@@ -7,7 +7,7 @@
 {% block base_main %}
     {% if site_is_writeable %}
         <ul class="actions">
-            <li><a href="{% url 'new_graphics' %}" class="action_button icon add open_in_lightbox">New graphics</a></li>
+            <li>{% icon_button url="new_graphics" icon="add" lightbox=True label="New graphics" %}</li>
         </ul>
     {% endif %}
 
@@ -26,7 +26,7 @@
         <input type="submit" value="Find graphics">
     </form>
 
-    {% include "shared/production_reorder_links.html" %}
+    {% include "productions/includes/reorder_links.html" %}
 
     {% with production_page.object_list as productions %}
         {% if productions %}

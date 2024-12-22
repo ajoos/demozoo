@@ -174,7 +174,19 @@ class Releaser(ModelWithPrefetchSnooping, Lockable):
                 group_names = [group.name for group in groups]
             return "%s / %s" % (self.name, ' ^ '.join(group_names))
         else:
-            return self.name
+            # no current groups, list ex groups instead
+            groups = self.groups()
+
+            if groups:
+                if sum([len(group.name) for group in groups]) >= 20:
+                    # abbreviate where possible
+                    group_names = [(group.abbreviation or group.name) for group in groups]
+                else:
+                    # use full group names - not too long
+                    group_names = [group.name for group in groups]
+                return "%s (Ex groups: %s)" % (self.name, ' ^ '.join(group_names))
+            else:
+                return self.name
 
     @property
     def primary_nick(self):
@@ -376,7 +388,19 @@ class Nick(ModelWithPrefetchSnooping, models.Model):
                 group_names = [group.name for group in groups]
             return "%s / %s" % (self.name, ' ^ '.join(group_names))
         else:
-            return self.name
+            # no current groups, list ex groups instead
+            groups = self.releaser.groups()
+
+            if groups:
+                if sum([len(group.name) for group in groups]) >= 20:
+                    # abbreviate where possible
+                    group_names = [(group.abbreviation or group.name) for group in groups]
+                else:
+                    # use full group names - not too long
+                    group_names = [group.name for group in groups]
+                return "%s (Ex groups: %s)" % (self.name, ' ^ '.join(group_names))
+            else:
+                return self.name
 
     # Determine whether or not this nick is referenced in any external records (credits, authorships etc)
     def is_referenced(self):

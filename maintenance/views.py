@@ -651,48 +651,48 @@ class DuplicateExternalLinks(StaffOnlyMixin, Report):
         def prod_duplicates_by_link_class(link_class):
             return Production.objects.raw(
                 """
-                SELECT DISTINCT productions_production.*, productions_productionlink.parameter
+                SELECT DISTINCT productions_production.*, productions_productionlink.parameter, productions_productionlink.link_class
                 FROM productions_production
                 INNER JOIN productions_productionlink ON (
                     productions_production.id = productions_productionlink.production_id
-                    AND productions_productionlink.link_class = %s
-                    AND productions_productionlink.is_download_link = 'f')
+                    AND productions_productionlink.is_download_link = 'f'
+                )
                 INNER JOIN productions_productionlink AS other_link ON (
                     productions_productionlink.link_class = other_link.link_class
                     AND productions_productionlink.parameter = other_link.parameter
                     AND productions_productionlink.id <> other_link.id
                     AND other_link.is_download_link = 'f'
                 )
-                ORDER BY productions_productionlink.parameter
-            """,
-                [link_class],
+                ORDER BY productions_productionlink.link_class, productions_productionlink.parameter
+            """,[]
             )
 
         def releaser_duplicates_by_link_class(link_class):
             return Releaser.objects.raw(
                 """
-                SELECT DISTINCT demoscene_releaser.*, demoscene_releaserexternallink.parameter
+                SELECT DISTINCT demoscene_releaser.*, demoscene_releaserexternallink.parameter, demoscene_releaserexternallink.link_class
                 FROM demoscene_releaser
                 INNER JOIN demoscene_releaserexternallink ON (
                     demoscene_releaser.id = demoscene_releaserexternallink.releaser_id
-                    AND demoscene_releaserexternallink.link_class = %s)
+                )
                 INNER JOIN demoscene_releaserexternallink AS other_link ON (
                     demoscene_releaserexternallink.link_class = other_link.link_class
                     AND demoscene_releaserexternallink.parameter = other_link.parameter
                     AND demoscene_releaserexternallink.id <> other_link.id
                 )
-                ORDER BY demoscene_releaserexternallink.parameter
-            """,
-                [link_class],
+                ORDER BY demoscene_releaserexternallink.link_class, demoscene_releaserexternallink.parameter
+            """,[]
             )
 
         prod_dupes = {}
-        for link_class in ProductionLink.objects.distinct().values_list("link_class", flat=True):
-            prod_dupes[link_class] = prod_duplicates_by_link_class(link_class)
+        #for link_class in ProductionLink.objects.distinct().values_list("link_class", flat=True):
+        #prod_dupes[link_class] = prod_duplicates_by_link_class(link_class)
+        prod_dupes = prod_duplicates_by_link_class("").prefetch_related("author_nicks","author_affiliation_nicks","author_nicks__releaser","author_affiliation_nicks__releaser")[:20]
 
         releaser_dupes = {}
-        for link_class in ReleaserExternalLink.objects.distinct().values_list("link_class", flat=True):
-            releaser_dupes[link_class] = releaser_duplicates_by_link_class(link_class)
+        #for link_class in ReleaserExternalLink.objects.distinct().values_list("link_class", flat=True):
+        #   releaser_dupes[link_class] = releaser_duplicates_by_link_class(link_class)
+        releaser_dupes = releaser_duplicates_by_link_class("").prefetch_related("nicks")
 
         context.update(
             {
